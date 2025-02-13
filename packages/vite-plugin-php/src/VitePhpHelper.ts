@@ -229,12 +229,7 @@ export class VitePhpHelper {
 
     this.ws = ws;
 
-    chokidar.watch('.', {
-      ignored: (path, stats) => stats?.isFile() && !path.endsWith('.php') || false,
-      ignoreInitial: true
-    })
-      .on("add", this.reload.bind(this))
-      .on("change", this.reload.bind(this));
+    chokidar.watch(`${this.path.root}/**/*.php`, { cwd: this.path.root, ignoreInitial: true }).on("add", this.reload.bind(this)).on("change", this.reload.bind(this));
   }
 
   private reload(path2: string): void {
