@@ -1,3 +1,3 @@
-# Olex
+# Vite Plugins
 
-俺のフレキシブル CSS フレームワーク (Ore no Flexible CSS Framework)
+俺のViteのプラグイン
