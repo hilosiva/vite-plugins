@@ -2,7 +2,6 @@ import fs from "fs";
 import { glob } from "glob";
 
 import path from "path";
-import chokidar from "chokidar";
 import os from "os";
 
 interface Replace {
@@ -25,7 +24,6 @@ export interface VitePhpHelperOptions {
   entryPoint?: string;
   proxy?: string;
   viteHelperFile?: string;
-  reloadOnChange?: boolean;
   useWpEnv?: boolean;
 }
 
@@ -58,19 +56,16 @@ export class VitePhpHelper {
   private defaultHost: string;
   private localServer: URL;
   private entryPoint: URL;
-  private logger: any; // ロガーの型を適宜設定する
   private defaultOptions: VitePhpHelperOptions;
   private options: any; // オプションの型を適宜設定する
-  private ws: any;
+
 
   constructor(options: any = {}, config: any) {
     this.files = glob.sync(`${config.root}/**/*.php`);
     this.rollupOptions = config.build.rollupOptions;
-    this.logger = config.logger;
 
     this.defaultOptions = {
       viteHelperFile: `lib/ViteHelper.php`,
-      reloadOnChange: true,
       useWpEnv: false,
     };
 
@@ -89,8 +84,8 @@ export class VitePhpHelper {
     this.defaultHost = "localhost";
 
     this.hosts = {
-      development: config.server.host || config.inlineConfig.host ? this._getLocalIPAddress() : this.defaultHost,
-      production: config.preview.host || (config.inlineConfig.preview && config.inlineConfig.preview.host) ? this._getLocalIPAddress() : this.defaultHost,
+      development: config.server.host || config.inlineConfig.host ? this.getLocalIPAddress() : this.defaultHost,
+      production: config.preview.host || (config.inlineConfig.preview && config.inlineConfig.preview.host) ? this.getLocalIPAddress() : this.defaultHost,
     };
     this.ports = {
       development: config.inlineConfig.port ? config.inlineConfig.port : config.server.port ? config.server.port : 5173,
@@ -117,7 +112,7 @@ export class VitePhpHelper {
     }
   }
 
-  private _getLocalIPAddress() {
+  getLocalIPAddress() {
     const interfaces = os.networkInterfaces();
     for (const interfaceName in interfaces) {
       const addresses = interfaces[interfaceName];
@@ -222,25 +217,7 @@ export class VitePhpHelper {
     await this.modifiedFile(`${this.path.root}/${this.options.viteHelperFile}`, this.replaceStrings, replaces, distFilePath);
   }
 
-  public liveReload(ws: any): void {
-    if (!this.options.reloadOnChange) {
-      return;
-    }
 
-    this.ws = ws;
-
-    chokidar.watch(`${this.path.root}/**/*.php`, { cwd: this.path.root, ignoreInitial: true }).on("add", this.reload.bind(this)).on("change", this.reload.bind(this));
-  }
-
-  private reload(path2: string): void {
-
-    this.ws.send({ type: "full-reload", path: path2 });
-
-    this.logger.info(`page reload ${path2}`, {
-      clear: true,
-      timestamp:  Date.now(),
-    });
-  }
 
   private deepMerge(target: any, source: any) {
     if (typeof target !== "object" || typeof source !== "object") {

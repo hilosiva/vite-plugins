@@ -8,6 +8,7 @@
     "vite": "pnpm run --filter=vite-playground dev",
     "vite-build": "pnpm run --filter=vite-playground build",
     "vite-preview": "pnpm run --filter=vite-playground preview",
+    "vite-destroy": "pnpm run --filter=vite-playground wp:destroy",
     "test": "turbo run test",
     "version:patch": "pnpm version patch --filter='packages/*' --force --no-git-tag-version",
     "version:minor": "pnpm version minor --filter='packages/*' --force --no-git-tag-version",

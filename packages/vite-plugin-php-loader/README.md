@@ -1,6 +1,6 @@
-# vite-plugin-php
+# vite-plugin-php-loadder
 
-[vite-plugin-php](https://github.com/hilosiva/vite-plugins/packages/vite-plugin-php/) は、俺流の Vite 用 PHP ローダーです。
+[vite-plugin-php-loadder](https://github.com/hilosiva/vite-plugins/packages/vite-plugin-php-loadder/) は、俺流の Vite 用 PHP ローダーです。
 
 
 
@@ -15,19 +15,19 @@
 ■ npm の場合
 
 ```console
-  npm i @hilosiva/vite-plugin-php -D
+  npm i @hilosiva/vite-plugin-php-loadder -D
 ```
 
 ■ yarn の場合
 
 ```console
-  yarn add @hilosiva/vite-plugin-php -D
+  yarn add @hilosiva/vite-plugin-php-loadder -D
 ```
 
 ■ pnpm の場合
 
 ```console
-  pnpm i @hilosiva/vite-plugin-php -D
+  pnpm i @hilosiva/vite-plugin-php-loadder -D
 ```
 
 
@@ -37,12 +37,12 @@
 
 ```javascript
 import { defineConfig } from "vite";
-import Php from "@hilosiva/vite-plugin-php"; // 追加
+import { vitePhpLoader } from "@hilosiva/vite-plugin-php-loadder"; // 追加
 
 export default defineConfig({
   plugins: [
     // 追加
-    Php({
+    vitePhpLoader({
       /* オプション */
     }),
   ],
@@ -66,10 +66,3 @@ PHP ファイルに読み込ませるエントリーポイントとなる JS フ
 - デフォルト： `'lib/ViteHelper.php'`
 
 [Orelop WP](https://github.com/hilosiva/orelop-wp)のヘルパー用 PHP ファイルのファイルパス
-
-### `reloadOnChange`
-
-- タイプ： Boolean
-- デフォルト： true
-
-PHP ファイルの更新時にライブリロードを行うかどうか

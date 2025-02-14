@@ -1,10 +1,10 @@
 import path from "path";
 import { VitePhpHelper } from "./VitePhpHelper";
 import type { VitePhpHelperOptions } from "./VitePhpHelper";
-import type { Plugin, ResolvedConfig } from "vite";
+import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
 
-export default function php(options: VitePhpHelperOptions = {}): Plugin[] {
-
+export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
+  let devServer: ViteDevServer | null = null;
   let config: ResolvedConfig | null = null;
 
   let vitePhpHelper: VitePhpHelper;
@@ -17,8 +17,7 @@ export default function php(options: VitePhpHelperOptions = {}): Plugin[] {
 
   return [
     {
-      name: "@hilosiva/php:scan",
-      enforce: 'pre',
+      name: "@hilosiva/php-loader:scan",
 
       config: (config) => (
         {
@@ -40,7 +39,10 @@ export default function php(options: VitePhpHelperOptions = {}): Plugin[] {
         }
       ),
 
-
+      // サーバーインスタンスの保存
+      configureServer(_server) {
+        devServer = _server;
+      },
 
       // 設定
       async configResolved(_config) {
@@ -51,33 +53,51 @@ export default function php(options: VitePhpHelperOptions = {}): Plugin[] {
         vitePhpHelper.init();
       },
 
-      configureServer(server) {
 
-        if (options.useWpEnv) {
-          server.httpServer?.on("listening", () => {
-          console.log("\nWordPress is running at: http://localhost:8080\n");
-        });
+
+    },
+
+
+    // サーバー
+    {
+      name: "@hilosiva/php-loader:serve",
+      apply: 'serve',
+
+       // サーバーインスタンスの保存
+      handleHotUpdate({file, server }) {
+
+        if (file.endsWith('.php')) {
+          server.ws.send({ type: 'full-reload', path: '*' })
+
+          config?.logger.info(`page reload ${file.replace(config.root, "")}`, {
+            clear: true,
+            timestamp: true,
+          })
+          return []
+        }
+      }
+
+    },
+    {
+      name: "@hilosiva/php-loader:listen",
+      apply: 'serve',
+      enforce: 'post',
+
+      buildStart() {
+        if (devServer && options.useWpEnv) {
+          config?.logger.info(`WordPress is running\n→ Local: http://localhost:8080\n→ NetWork: http://${vitePhpHelper.getLocalIPAddress()}:8080`, {
+            clear: false,
+            timestamp: false,
+          })
         }
 
       },
 
     },
 
-    // サーバー
-    {
-      name: "@hilosiva/php:serve",
-      apply: 'serve',
-
-       // サーバーインスタンスの保存
-      configureServer({ws}) {
-        vitePhpHelper.liveReload(ws);
-      },
-
-
-    },
     // ビルド時
     {
-      name: "@hilosiva/php:build",
+      name: "@hilosiva/php-loader:build",
       apply: 'build',
       enforce: 'post',
 

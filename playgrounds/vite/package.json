@@ -17,7 +17,7 @@
     "preview": "wp-env start && wp-env run cli wp theme activate production && vite preview"
   },
   "dependencies": {
-    "@hilosiva/vite-plugin-php": "workspace:^"
+    "@hilosiva/vite-plugin-php-loader": "workspace:^"
   },
   "devDependencies": {
     "@hilosiva/vite-plugin-image-oretimaizer": "^0.2.4",

@@ -1,5 +1,5 @@
 // playgrounds/vite/vite.config.ts
-import php from "@hilosiva/vite-plugin-php";
+import { vitePhpLoader } from "@hilosiva/vite-plugin-php-loader";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { defineConfig } from "vite";
 
@@ -16,7 +16,7 @@ export default defineConfig({
   base: "./",
   publicDir: `../${dir.publicDir}`,
   plugins: [
-    php({
+    vitePhpLoader({
        useWpEnv: true,
     }),
     viteStaticCopy({
@@ -53,5 +53,9 @@ export default defineConfig({
     assetsInlineLimit: 0,
     write: true,
   },
+
+  server: {
+    open: "http://localhost:8080"
+  }
 
 });
