@@ -56,7 +56,7 @@ importers:
         specifier: ^6.0.11
         version: 6.1.0(@types/node@22.13.1)(yaml@2.7.0)
 
-  packages/vite-plugin-php-loader copy:
+  packages/vite-plugin-php-loader:
     dependencies:
       glob:
         specifier: ^11.0.1
@@ -92,7 +92,7 @@ importers:
         version: link:../../packages/vite-plugin-image-optimizer
       '@hilosiva/vite-plugin-php-loader':
         specifier: workspace:^
-        version: link:../../packages/vite-plugin-php-loader copy
+        version: link:../../packages/vite-plugin-php-loader
     devDependencies:
       '@wordpress/env':
         specifier: ^10.17.0
