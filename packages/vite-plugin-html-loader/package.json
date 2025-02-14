@@ -1,0 +1,57 @@
+{
+  "name": "@hilosiva/vite-plugin-html-loader",
+  "version": "0.1.0",
+  "description": "Vite用のHTML Loader",
+  "license": "MIT",
+  "author": "Shibata Hironori",
+  "keywords": [
+    "vite",
+    "HTML"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hilosiva/vite-plugins.git",
+    "directory": "packages/vite-plugin-html-loader"
+  },
+  "bugs": "https://github.com/hilosiva/vite-plugins/issues",
+  "homepage": "https://github.com/hilosiva/vite-plugins",
+  "scripts": {
+    "build": "tsup-node --env.NODE_ENV production",
+    "dev": "tsup-node --env.NODE_ENV development --watch",
+    "test": "vitest"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "provenance": false,
+    "access": "public",
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "require": "./dist/index.js",
+        "import": "./dist/index.mjs"
+      },
+      "./package.json": "./package.json"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "@types/node": "^22.2.0",
+    "tsup": "^8.2.4",
+    "vite": "^6.0.11"
+  },
+  "dependencies": {
+    "glob": "^11.0.1"
+  },
+  "peerDependencies": {
+    "vite": "^6.0.11 || ^6"
+  }
+}

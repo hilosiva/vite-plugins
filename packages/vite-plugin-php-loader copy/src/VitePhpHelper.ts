@@ -95,7 +95,7 @@ export class VitePhpHelper {
 
     this.localServer = new URL(`${this.protocol[this.mode]}://${this.hosts[this.mode]}:${this.ports[this.mode]}`);
 
-    this.entryPoint = new URL(this.rollupOptions.input && this.rollupOptions.input.main ? this.rollupOptions.input.main.replace(config.root, "") : "assets/scripts/main.ts", this.localServer);
+    this.entryPoint = new URL(this.rollupOptions.input && this.rollupOptions.input.main ? this.rollupOptions.input.main.replace(config.root, "") : "assets/scripts/main.js", this.localServer);
 
     this.options = this.deepMerge(this.defaultOptions, options);
 

@@ -1,5 +1,5 @@
 {
-  "name": "vite-playground",
+  "name": "wordpress-playground",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -17,10 +17,10 @@
     "preview": "wp-env start && wp-env run cli wp theme activate production && vite preview"
   },
   "dependencies": {
-    "@hilosiva/vite-plugin-php-loader": "workspace:^"
+    "@hilosiva/vite-plugin-php-loader": "workspace:^",
+    "@hilosiva/vite-plugin-image-optimizer": "workspace:^"
   },
   "devDependencies": {
-    "@hilosiva/vite-plugin-image-oretimaizer": "^0.2.4",
     "vite": "^6.0.11",
     "@wordpress/env": "^10.17.0",
     "vite-plugin-static-copy": "^2.2.0"

@@ -1,6 +1,6 @@
 // playgrounds/vite/vite.config.ts
-import { vitePhpLoader } from "@hilosiva/vite-plugin-php-loader";
-import { viteStaticCopy } from "vite-plugin-static-copy";
+import { viteHtmlLoader } from "@hilosiva/vite-plugin-html-loader";
+import { viteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer";
 import { defineConfig } from "vite";
 
 
@@ -16,19 +16,10 @@ export default defineConfig({
   base: "./",
   publicDir: `../${dir.publicDir}`,
   plugins: [
-    vitePhpLoader({
-       useWpEnv: true,
-    }),
-    viteStaticCopy({
-      targets: [
-        {
-          src: ["./style.css", "./*.txt", "./screenshot.png"],
-          dest: "./",
-        },
-      ],
-      structured: true,
-      watch: {
-        reloadPageOnChange: true,
+    viteHtmlLoader(),
+    viteImageOptimazer({
+      generate: {
+        preserveExt: true,
       },
     }),
   ],
@@ -55,7 +46,7 @@ export default defineConfig({
   },
 
   server: {
-    open: "http://localhost:8080"
+    open: true
   }
 
 });
