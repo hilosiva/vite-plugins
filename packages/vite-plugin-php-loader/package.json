@@ -1,6 +1,6 @@
 {
   "name": "@hilosiva/vite-plugin-php-loader",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Vite用のPHP Loader",
   "license": "MIT",
   "author": "Shibata Hironori",
