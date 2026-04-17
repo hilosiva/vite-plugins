@@ -1,4 +1,4 @@
-import path from "path";
+import path from "node:path";
 import { VitePhpHelper } from "./VitePhpHelper";
 import type { VitePhpHelperOptions } from "./VitePhpHelper";
 import type { Plugin, ResolvedConfig, ViteDevServer } from "vite";
@@ -85,10 +85,25 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
 
       buildStart() {
         if (devServer && options.useWpEnv) {
-          config?.logger.info(`WordPress is running\n→ Local: http://localhost:8080\n→ NetWork: http://${vitePhpHelper.getLocalIPAddress()}:8080`, {
+          const ip = vitePhpHelper.getLocalIPAddress();
+
+          const b = "\x1b[1m";   // bold
+          const r = "\x1b[0m";   // reset
+          const g = "\x1b[32m";  // green
+          const c = "\x1b[96m";  // bright cyan
+
+          config?.logger.info([
+            "",
+            `  ${b}${c}🌐  WordPress (wp-env)${r}`,
+            `  ${c}${"─".repeat(40)}${r}`,
+            `  ${b}${c}▌${r}  ${b}➜${r}  Local:   ${b}${g}http://localhost:8080${r}`,
+            `  ${b}${c}▌${r}  ${b}➜${r}  Network: ${b}${g}http://${ip}:8080${r}`,
+            `  ${c}${"─".repeat(40)}${r}`,
+            "",
+          ].join("\n"), {
             clear: false,
             timestamp: false,
-          })
+          });
         }
 
       },

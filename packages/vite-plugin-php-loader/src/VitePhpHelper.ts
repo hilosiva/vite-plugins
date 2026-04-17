@@ -1,8 +1,7 @@
-import fs from "fs";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { glob } from "glob";
-
-import path from "path";
-import os from "os";
 
 interface Replace {
   search: RegExp;
@@ -134,7 +133,7 @@ export class VitePhpHelper {
       const content = fs.readFileSync(file, "utf-8");
       const modifiedContent = replaceFunc(content, replaces);
 
-      const distFileDirectory = output.split("/").slice(0, -1).join("/");
+      const distFileDirectory = path.dirname(output);
       fs.mkdirSync(distFileDirectory, { recursive: true });
       fs.writeFileSync(output, modifiedContent);
     } catch (error) {
@@ -193,7 +192,10 @@ export class VitePhpHelper {
     try {
       const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
       this.files.forEach(async (file) => {
-        const output = file.replace(this.path.root, this.path.absoluteDist);
+        const normalizedFile = file.replace(/\\/g, "/");
+        const normalizedRoot = this.path.root.replace(/\\/g, "/");
+        const normalizedDist = this.path.absoluteDist.replace(/\\/g, "/");
+        const output = normalizedFile.replace(normalizedRoot, normalizedDist);
         await this.modifiedFile(file, this.replaceImagePaths, manifest, output);
       });
     } catch (e: any) {
