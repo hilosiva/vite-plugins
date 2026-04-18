@@ -11,7 +11,7 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
   let isSSR = false;
 
   const settings = {
-    entryPoint: options.entryPoint ? options.entryPoint : "assets/scripts/main.js",
+    entryPoint: options.entryPoint ? options.entryPoint : "scripts/main.js",
   };
 
 
@@ -33,8 +33,8 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
           server: {
             strictPort: true,
             cors: true,
+            host: true,
             port: 5555,
-            origin: 'http://localhost:5555',
           }
         }
       ),
@@ -50,10 +50,12 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
 
         isSSR = !!config.build.ssr;
         vitePhpHelper = new VitePhpHelper(options, config);
-        vitePhpHelper.init();
+
+        // dev モード時は ViteHelper.php の定数（VITE_SERVER / ENTRY_POINT）を更新
+        if (_config.command === 'serve') {
+          await vitePhpHelper.init();
+        }
       },
-
-
 
     },
 
@@ -63,7 +65,6 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
       name: "@hilosiva/php-loader:serve",
       apply: 'serve',
 
-       // サーバーインスタンスの保存
       handleHotUpdate({file, server }) {
 
         if (file.endsWith('.php')) {
@@ -118,7 +119,7 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
 
       async writeBundle() {
         await vitePhpHelper.build();
-      }
+      },
     },
 
   ] satisfies Plugin[];

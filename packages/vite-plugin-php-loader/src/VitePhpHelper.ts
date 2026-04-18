@@ -18,7 +18,7 @@ interface Manifest {
 interface ReplaceFunc {
   (content: string, replaces: Replace[] | Manifest): string;
 }
-// type ReplaceFunc = (content: string, replaces: Replace[] | Manifest) => string;
+
 export interface VitePhpHelperOptions {
   entryPoint?: string;
   proxy?: string;
@@ -56,8 +56,7 @@ export class VitePhpHelper {
   private localServer: URL;
   private entryPoint: URL;
   private defaultOptions: VitePhpHelperOptions;
-  private options: any; // オプションの型を適宜設定する
-
+  private options: any;
 
   constructor(options: any = {}, config: any) {
     this.files = glob.sync(`${config.root}/**/*.php`);
@@ -91,10 +90,11 @@ export class VitePhpHelper {
       production: config.inlineConfig.preview && config.inlineConfig.preview.port ? config.inlineConfig.preview.port : config.preview.port ? config.preview.port : 4173,
     };
 
-
     this.localServer = new URL(`${this.protocol[this.mode]}://${this.hosts[this.mode]}:${this.ports[this.mode]}`);
-
-    this.entryPoint = new URL(this.rollupOptions.input && this.rollupOptions.input.main ? this.rollupOptions.input.main.replace(config.root, "") : "assets/scripts/main.js", this.localServer);
+    const normalizedMain = this.rollupOptions.input?.main?.replace(/\\/g, "/") ?? "";
+    const normalizedRoot = config.root.replace(/\\/g, "/");
+    const entryPointPath = normalizedMain ? normalizedMain.replace(normalizedRoot, "") : "scripts/main.js";
+    this.entryPoint = new URL(entryPointPath || "scripts/main.js", this.localServer);
 
     this.options = this.deepMerge(this.defaultOptions, options);
 
@@ -126,8 +126,6 @@ export class VitePhpHelper {
     return "localhost";
   }
 
-
-
   private async modifiedFile(file: string, replaceFunc: ReplaceFunc, replaces: Replace[] | Manifest, output: string) {
     try {
       const content = fs.readFileSync(file, "utf-8");
@@ -136,36 +134,33 @@ export class VitePhpHelper {
       const distFileDirectory = path.dirname(output);
       fs.mkdirSync(distFileDirectory, { recursive: true });
       fs.writeFileSync(output, modifiedContent);
-    } catch (error) {
+    } catch (error: any) {
+      console.warn(`[vite-plugin-php-loader] ファイルの処理をスキップしました: ${file} (${error.message})`);
       return;
     }
   }
 
   private replaceStrings: ReplaceFunc = (content, replaces) => {
     let modifiedContent = content;
-
     (replaces as Replace[]).forEach((replace) => {
       modifiedContent = modifiedContent.replace(replace.search, replace.new);
     });
-
     return modifiedContent;
   };
 
   private replaceImagePaths: ReplaceFunc = (content, replaces) => {
     let modifiedContent = content;
-
     Object.keys(replaces as Manifest).forEach((key) => {
       const { file, src } = (replaces as Manifest)[key];
-      modifiedContent = modifiedContent.replaceAll(new RegExp(src, "g"), file);
+      if (!src) return;
+      const escapedSrc = src.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      modifiedContent = modifiedContent.replaceAll(new RegExp(escapedSrc, "g"), file);
     });
-
     return modifiedContent;
   };
 
   public async init(): Promise<void> {
-
-
-    const file = `${this.path.root}/${this.options.viteHelperFile}`;
+    const file = path.join(this.path.root, this.options.viteHelperFile);
 
     const replaces: Replace[] = [
       {
@@ -187,24 +182,24 @@ export class VitePhpHelper {
   }
 
   private async changeManifestAssets(): Promise<void> {
-    const manifestPath = `${this.path.absoluteDist}/.vite/manifest.json`;
+    const manifestPath = path.join(this.path.absoluteDist, ".vite", "manifest.json");
 
     try {
       const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-      this.files.forEach(async (file) => {
+      for (const file of this.files) {
         const normalizedFile = file.replace(/\\/g, "/");
         const normalizedRoot = this.path.root.replace(/\\/g, "/");
         const normalizedDist = this.path.absoluteDist.replace(/\\/g, "/");
         const output = normalizedFile.replace(normalizedRoot, normalizedDist);
         await this.modifiedFile(file, this.replaceImagePaths, manifest, output);
-      });
+      }
     } catch (e: any) {
       return;
     }
   }
 
   private async changeDevelpmentMode(): Promise<void> {
-    const replaces = [
+    const replaces: Replace[] = [
       {
         search: /const IS_DEVELOPMENT = true;/,
         new: "const IS_DEVELOPMENT = false;",
@@ -215,11 +210,9 @@ export class VitePhpHelper {
       },
     ];
 
-    const distFilePath = `${this.path.absoluteDist}/${this.options.viteHelperFile}`;
-    await this.modifiedFile(`${this.path.root}/${this.options.viteHelperFile}`, this.replaceStrings, replaces, distFilePath);
+    const distFilePath = path.join(this.path.absoluteDist, this.options.viteHelperFile);
+    await this.modifiedFile(path.join(this.path.root, this.options.viteHelperFile), this.replaceStrings, replaces, distFilePath);
   }
-
-
 
   private deepMerge(target: any, source: any) {
     if (typeof target !== "object" || typeof source !== "object") {
