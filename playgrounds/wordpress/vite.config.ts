@@ -43,16 +43,16 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        entryFileNames: "assets/scripts/[name]-[hash].js",
-        chunkFileNames: "assets/scripts/[name]-[hash].js",
+        entryFileNames: "scripts/[name]-[hash].js",
+        chunkFileNames: "scripts/[name]-[hash].js",
         assetFileNames: ({ names }) => {
-          if (/\.( gif|jpeg|jpg|png|svg|webp| )$/.test(names[0] ?? "")) {
-            return "assets/images/[name]-[hash][extname]";
+          if (/\.(gif|jpeg|jpg|png|svg|webp)$/.test(names[0] ?? "")) {
+            return "images/[name]-[hash][extname]";
           }
           if (/\.css$/.test(names[0] ?? "")) {
-            return "assets/styles/[name]-[hash][extname]";
+            return "styles/[name]-[hash][extname]";
           }
-          return "assets/[name]-[hash][extname]";
+          return "[name]-[hash][extname]";
         },
       },
     },
@@ -61,7 +61,7 @@ export default defineConfig({
   },
 
   server: {
-    open: "http://localhost:8080"
+    open: "http://localhost:8080",
   }
 
 });
