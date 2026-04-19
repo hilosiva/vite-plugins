@@ -4,7 +4,7 @@ define('DIST_THEME_URL', get_template_directory_uri());
 class ViteHelper
 {
   const IS_DEVELOPMENT = true;
-  const VITE_SERVER = 'http://192.168.1.3:4173';
+  const VITE_SERVER = 'http://192.168.1.3:5555';
   const ENTRY_POINT = 'scripts/main.js';
   const DIST_URL = DIST_THEME_URL;
   const PUBLIC_URL = self::IS_DEVELOPMENT ? self::VITE_SERVER : DIST_THEME_URL;

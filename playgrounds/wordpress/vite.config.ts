@@ -32,7 +32,6 @@ export default defineConfig({
           dest: "./",
         },
       ],
-      structured: true,
       watch: {
         reloadPageOnChange: true,
       },

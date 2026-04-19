@@ -65,10 +65,10 @@ export function vitePhpLoader(options: VitePhpHelperOptions = {}): Plugin[] {
       name: "@hilosiva/php-loader:serve",
       apply: 'serve',
 
-      handleHotUpdate({file, server }) {
+      hotUpdate({file, server }) {
 
         if (file.endsWith('.php')) {
-          server.ws.send({ type: 'full-reload', path: '*' })
+          server.hot.send({ type: 'full-reload', path: '*' })
 
           config?.logger.info(`page reload ${file.replace(config.root, "")}`, {
             clear: true,
