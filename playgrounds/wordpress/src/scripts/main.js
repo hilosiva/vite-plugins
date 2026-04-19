@@ -1,13 +1,13 @@
 /* --------- 　ここから編集禁止  ------------- */
 import "vite/modulepreload-polyfill";
 console.info("\n %c Orelop WP - https://github.com/hilosiva/orelop-wp \n", "color: #66ffa5; background: #001010; padding:8px 0;");
-import.meta.glob(["../images/**"]);
+import.meta.glob(["../assets/images/**"]);
 /* --------- 　ここまで編集禁止  ------------- */
 
 import "../styles/global.css";
 
 if (import.meta.hot) {
   import.meta.hot.accept(() => {
-    console.log('HMR 更新');
+    console.log("HMR 更新");
   });
 }

@@ -1,219 +1,109 @@
 # vite-plugin-image-optimizer
 
-[vite-plugin-image-optimizer](https://github.com/hilosiva/vite-plugins/packages/vite-plugin-image-optimizer) は、ビルド時に[sharp](https://sharp.pixelplumbing.com/) を利用して画像アセットを最適化する俺流の [Vite](https://ja.vitejs.dev/) 用プラグイン。
+ビルド時に [sharp](https://sharp.pixelplumbing.com/) を使って画像を最適化・変換する Vite プラグイン。
 
+## 動作環境
 
+- **Node.js**: 20.19.0 以上（22.12.0 以上推奨）
+- **Vite**: 6.x または 7.x
 
 ## 特徴
 
-画像アセットを圧縮し、`.jpg/.jpeg`と`.png`形式の画像は、`.webp` や`.avif` ファイルも生成します。
-
-サポートするファイル形式
-
-- `.jpg/.jpeg`
-- `.png`
-- `.gif`
-- `.webp`
-- `.avif`
+- JPG / PNG / GIF / WebP / AVIF を圧縮
+- JPG・PNG から WebP・AVIF を自動生成
+- `build.assetsInlineLimit: 0` と組み合わせるとすべての画像に適用できる
 
 ## インストール
 
-■ npm の場合
+```bash
+# pnpm
+pnpm add @hilosiva/vite-plugin-image-optimizer -D
 
-```console
-  npm i @hilosiva/vite-plugin-image-optimizer -D
+# npm
+npm i @hilosiva/vite-plugin-image-optimizer -D
+
+# yarn
+yarn add @hilosiva/vite-plugin-image-optimizer -D
 ```
 
-■ yarn の場合
+## 使い方
 
-```console
-  yarn add @hilosiva/vite-plugin-image-optimizer -D
-```
-
-■ pnpm の場合
-
-```console
-  pnpm i @hilosiva/vite-plugin-image-optimizer -D
-```
-
-
-
-## 使用方法
-
-「vite.config.js」でインポートし、プラグインに追加してください。
-
-```javascript
+```ts
 import { defineConfig } from "vite";
-import { ViteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer"; // 追加
+import { viteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer";
 
 export default defineConfig({
   plugins: [
-    // 追加
-    ViteImageOptimazer({
-      /* オプション */
+    viteImageOptimazer({
+      generate: {
+        preserveExt: true,
+      },
     }),
   ],
+  build: {
+    assetsInlineLimit: 0, // base64 インライン化を無効にすると全画像が対象になる
+  },
 });
 ```
 
-下記のコマンドでビルドを行うことで圧縮が実行されます。
-
-```console
-npm run build
-```
-
 > **注意**
->
-> vite-plugin-image-optimizer は「[public](https://ja.vitejs.dev/guide/assets.html#public-%E3%83%86%E3%82%99%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA)」フォルダ内の静的アセットには実行されません。
->
-> また、Vite は、[`build.assetsInlineLimit`](https://ja.vitejs.dev/config/build-options.html#build-assetsinlinelimit)の設定値より小さなサイズ（デフォルト：`4KB`）の画像は base64 URL としてインライン化されるため、この設定値より大きなサイズの画像にのみ vite-plugin-image-optimizer が実行されます。
->
-> インライン化を無効にするには、、[`build.assetsInlineLimit`](https://ja.vitejs.dev/config/build-options.html#build-assetsinlinelimit)の設定値を「`0`」にして下さい。
->
-> 「vite.config.js」
->
-> ```javascript
-> export default defineConfig({
->  plugins: [
->    ViteImageOptimazer({
->      /* オプション */
->    }),
->  ],
->
->  ...
->
->  build: {
->    assetsInlineLimit: 0, // base64 URL としてのインライン化を無効
->  },
-> });
-> ```
+> `public/` フォルダ内の静的アセットは対象外です。
+> また `build.assetsInlineLimit` のデフォルト（4KB）以下の画像はインライン化されるため対象外になります。インライン化を無効にする場合は `assetsInlineLimit: 0` を設定してください。
 
 ## オプション
 
 ### `supportedExts`
 
-- タイプ： Array
-- デフォルト： `[".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif"]`
+- タイプ: `string[]`
+- デフォルト: `[".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif"]`
 
-サポートする画像ファイルの形式。
-
-これらの画像形式の画像が圧縮の対象となります。
+最適化対象の拡張子。
 
 ### `generate.inputExts`
 
-- タイプ： Array
-- デフォルト： [".jpg", ".jpeg", ".png"]
+- タイプ: `string[]`
+- デフォルト: `[".jpg", ".jpeg", ".png"]`
 
-`generate.outputExts` に指定した形式の画像を生成する対象となる画像形式。
+WebP・AVIF を生成する変換元フォーマット。
 
 ### `generate.outputExts`
 
-- タイプ： Array
-- デフォルト： [".webp", ".avif"]
+- タイプ: `string[]`
+- デフォルト: `[".webp", ".avif"]`
 
-新たに生成する画像形式。
+生成する変換先フォーマット。
 
 ### `generate.preserveExt`
 
-- タイプ： Bool
-- デフォルト： `false`
+- タイプ: `boolean`
+- デフォルト: `false`
 
-自動生成する際、元の拡張子を保持するかどうか
+`true` にすると元の拡張子をファイル名に残します。
 
-`true`にすると、元の拡張子を保持し、後ろに新しい拡張子を追加します。 例： `sample.jpg.webp`
-
-`false`にすると、元の拡張子を新しい拡張子に置き換えます。 例： `sample.webp`
-
-### `jpg`
-
-- タイプ： Object
-- デフォルト： [sharp の「jpeg」オプション](https://sharp.pixelplumbing.com/api-output#jpeg)のデフォルト値
-
-`.jpg` の圧縮設定。
-
-[sharp の「jpeg」オプション](https://sharp.pixelplumbing.com/api-output#jpeg)と同じ設定が使えます。
-
-### `jpeg`
-
-- タイプ： Object
-- デフォルト： [sharp の「jpeg」オプション](https://sharp.pixelplumbing.com/api-output#jpeg)のデフォルト値
-
-`.jpeg` の圧縮設定。
-
-[sharp の「jpeg」オプション](https://sharp.pixelplumbing.com/api-output#jpeg)と同じ設定が使えます。
-
-### `png`
-
-- タイプ： Object
-- デフォルト： [sharp の「png」オプション](https://sharp.pixelplumbing.com/api-output#png)のデフォルト値
-
-`.png` の圧縮設定。
-
-[sharp の「png」オプション](https://sharp.pixelplumbing.com/api-output#png)と同じ設定が使えます。
-
-### `.gif`
-
-- タイプ： Object
-- デフォルト： [sharp の「gif」オプション](https://sharp.pixelplumbing.com/api-output#gif)のデフォルト値
-
-`.gif` の圧縮設定。
-
-[sharp の「gif」オプション](https://sharp.pixelplumbing.com/api-output#gif)と同じ設定が使えます。
-
-### `webp`
-
-- タイプ： Object
-- デフォルト： [sharp の「webp」オプション](https://sharp.pixelplumbing.com/api-output#webp)のデフォルト値
-
-`.webp` の圧縮設定。
-
-[sharp の「webp」オプション](https://sharp.pixelplumbing.com/api-output#webp)と同じ設定が使えます。
-
-### `avif`
-
-- タイプ： Object
-- デフォルト： [sharp の「avif」オプション](https://sharp.pixelplumbing.com/api-output#avif)のデフォルト値
-
-`.avif` の圧縮設定。
-
-[sharp の「avif」オプション](https://sharp.pixelplumbing.com/api-output#avif)と同じ設定が使えます。
-
----
-
-例：vite.config.js
-
-```javascript
-import { defineConfig } from "vite";
-import { ViteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer";
-
-export default defineConfig({
-  plugins: [
-    ViteImageOptimazer({
-      generate: {
-        preserveExt: true,
-      },
-      jpg: {
-        quality: 70,
-        mozjpeg: true,
-      },
-      jpeg: {
-        quality: 70,
-        mozjpeg: true,
-      },
-      png: {
-        quality: 70,
-      },
-      webp: {
-        quality: 50,
-        lossless: true,
-      },
-      avif: {
-        lossless: true,
-      },
-    }),
-  ],
-  build: {
-    assetsInlineLimit: 0,
-  },
-});
 ```
+false: logo.png → logo.webp
+true:  logo.png → logo.png.webp
+```
+
+### `jpg` / `jpeg` / `png` / `gif` / `webp` / `avif`
+
+各フォーマットの圧縮オプション。[sharp のオプション](https://sharp.pixelplumbing.com/api-output)をそのまま渡せます。
+
+## 設定例
+
+```ts
+viteImageOptimazer({
+  generate: {
+    preserveExt: true,
+  },
+  jpg: { quality: 70, mozjpeg: true },
+  jpeg: { quality: 70, mozjpeg: true },
+  png: { quality: 70 },
+  webp: { quality: 75 },
+  avif: { quality: 70 },
+})
+```
+
+## ライセンス
+
+MIT
