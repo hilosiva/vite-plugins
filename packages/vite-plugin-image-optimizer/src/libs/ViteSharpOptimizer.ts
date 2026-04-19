@@ -22,7 +22,7 @@ interface Options {
   [key: string]: any; // その他のオプション項目
 }
 
-export interface ViteSharpOptimazerOptions {
+export interface ViteSharpOptimizerOptions {
   supportedExts?: string[]; // サポートする拡張子の配列
   generate?: {
     inputExts?: string[]; // 作成するフォーマットの元となるフォーマットの拡張子の配列
@@ -38,7 +38,7 @@ export interface ViteSharpOptimazerOptions {
   [key: string]: any; // その他のオプション項目
 }
 
-export class ViteSharpOptimazer {
+export class ViteSharpOptimizer {
   private outputDir: string;
   private sharpImageLists: SharpImage[];
   private originalSize: number;
@@ -119,7 +119,7 @@ export class ViteSharpOptimazer {
   private async _run() {
     await Promise.all(
       this.sharpImageLists.map(async (item, index) => {
-        await this._optimaze(item, index);
+        await this._optimize(item, index);
 
         if (this.isGenerateFormat(item.file)) {
           for (let i = 0; i < this.options.generate.outputExts.length; i++) {
@@ -132,7 +132,7 @@ export class ViteSharpOptimazer {
     console.log(`\n✨ Total \x1b[30m${this.formatBytes(this.optimizeSize)} / ${this.formatBytes(this.originalSize)} ${this.getRatio(this.originalSize, this.optimizeSize)}`);
   }
 
-  private async _optimaze(item: SharpImage, index: number) {
+  private async _optimize(item: SharpImage, index: number) {
     const { sharpImage, file } = item;
     const extName = path.extname(file);
     const sfunc = this.extFunctions[extName];

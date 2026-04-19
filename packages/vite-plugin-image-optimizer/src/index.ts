@@ -1,11 +1,11 @@
-import { ViteSharpOptimazer  } from "./libs/ViteSharpOptimazer";
-import type {  ViteSharpOptimazerOptions } from "./libs/ViteSharpOptimazer";
+import { ViteSharpOptimizer } from "./libs/ViteSharpOptimizer";
+import type { ViteSharpOptimizerOptions } from "./libs/ViteSharpOptimizer";
 
-export function viteImageOptimazer(opts: ViteSharpOptimazerOptions = {}): any {
+export function viteImageOptimizer(opts: ViteSharpOptimizerOptions = {}): any {
   return {
-    name: "@hilosiva/viteImageOptimazer",
+    name: "@hilosiva/viteImageOptimizer",
     async writeBundle(_options: any, bundle: any) {
-      new ViteSharpOptimazer(_options.dir, opts, bundle);
+      new ViteSharpOptimizer(_options.dir, opts, bundle);
     },
   };
 }

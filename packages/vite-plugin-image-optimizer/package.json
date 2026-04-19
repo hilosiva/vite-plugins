@@ -1,6 +1,6 @@
 {
   "name": "@hilosiva/vite-plugin-image-optimizer",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "画像アセットを最適化する Vite 用プラグイン。",
   "license": "MIT",
   "author": "Shibata Hironori",

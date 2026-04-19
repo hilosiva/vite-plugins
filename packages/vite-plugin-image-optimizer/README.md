@@ -30,11 +30,11 @@ yarn add @hilosiva/vite-plugin-image-optimizer -D
 
 ```ts
 import { defineConfig } from "vite";
-import { viteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer";
+import { viteImageOptimizer } from "@hilosiva/vite-plugin-image-optimizer";
 
 export default defineConfig({
   plugins: [
-    viteImageOptimazer({
+    viteImageOptimizer({
       generate: {
         preserveExt: true,
       },
@@ -92,7 +92,7 @@ true:  logo.png → logo.png.webp
 ## 設定例
 
 ```ts
-viteImageOptimazer({
+viteImageOptimizer({
   generate: {
     preserveExt: true,
   },
@@ -101,7 +101,7 @@ viteImageOptimazer({
   png: { quality: 70 },
   webp: { quality: 75 },
   avif: { quality: 70 },
-})
+});
 ```
 
 ## ライセンス

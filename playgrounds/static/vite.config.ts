@@ -1,8 +1,7 @@
 // playgrounds/vite/vite.config.ts
 import { viteHtmlLoader } from "@hilosiva/vite-plugin-html-loader";
-import { viteImageOptimazer } from "@hilosiva/vite-plugin-image-optimizer";
+import { viteImageOptimizer } from "@hilosiva/vite-plugin-image-optimizer";
 import { defineConfig } from "vite";
-
 
 const dir = {
   src: "src",
@@ -10,14 +9,13 @@ const dir = {
   outDir: "dist",
 };
 
-
 export default defineConfig({
   root: dir.src,
   base: "./",
   publicDir: `../${dir.publicDir}`,
   plugins: [
     viteHtmlLoader(),
-    viteImageOptimazer({
+    viteImageOptimizer({
       generate: {
         preserveExt: true,
       },
@@ -46,7 +44,6 @@ export default defineConfig({
   },
 
   server: {
-    open: true
-  }
-
+    open: true,
+  },
 });
